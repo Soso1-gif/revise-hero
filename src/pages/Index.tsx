@@ -1,107 +1,85 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Heart } from "lucide-react";
+import Announcement from "@/components/Announcement";
+import { Bell, Calendar, BookOpen, MessageSquare } from "lucide-react";
 
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  description: string;
+interface NavItem {
+  icon: typeof Bell;
+  label: string;
 }
 
-const products: Product[] = [
+const navigation: NavItem[] = [
+  { icon: Bell, label: "Announcements" },
+  { icon: Calendar, label: "Schedule" },
+  { icon: BookOpen, label: "Lessons" },
+  { icon: MessageSquare, label: "Discussions" },
+];
+
+const announcements = [
   {
-    id: 1,
-    name: "Classic White T-Shirt",
-    price: 29.99,
-    image: "/placeholder.svg",
-    description: "Premium cotton basic tee"
+    title: "Mathematics Review Session",
+    description: "Join us for an intensive review of Calculus fundamentals. Bring your questions!",
+    date: "2024-03-15",
+    time: "14:00",
+    type: "lesson" as const,
   },
   {
-    id: 2,
-    name: "Slim Fit Jeans",
-    price: 59.99,
-    image: "/placeholder.svg",
-    description: "Comfortable stretch denim"
+    title: "Assignment Due Reminder",
+    description: "Physics Lab Report due tomorrow. Make sure to include all experimental data.",
+    date: "2024-03-16",
+    time: "23:59",
+    type: "assignment" as const,
   },
   {
-    id: 3,
-    name: "Casual Hoodie",
-    price: 49.99,
-    image: "/placeholder.svg",
-    description: "Soft cotton blend hoodie"
+    title: "Study Group Formation",
+    description: "Looking for participants for the Chemistry study group. Sign up today!",
+    date: "2024-03-17",
+    time: "10:00",
+    type: "announcement" as const,
   },
-  {
-    id: 4,
-    name: "Summer Dress",
-    price: 79.99,
-    image: "/placeholder.svg",
-    description: "Light and flowy summer dress"
-  }
 ];
 
 const Index = () => {
-  const { toast } = useToast();
-  const [cart, setCart] = useState<Product[]>([]);
-
-  const addToCart = (product: Product) => {
-    setCart([...cart, product]);
-    toast({
-      title: "Added to Cart",
-      description: `${product.name} has been added to your cart`,
-    });
-  };
+  const [activeTab, setActiveTab] = useState("Announcements");
 
   return (
-    <div className="min-h-screen bg-secondary p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-primary">Fashion Store</h1>
-          <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-secondary">
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <h1 className="text-2xl font-bold text-primary">StudySync</h1>
             <Button variant="outline" size="icon">
-              <Heart className="h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="icon">
-              <ShoppingCart className="h-5 w-5" />
-              {cart.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                  {cart.length}
-                </span>
-              )}
+              <Bell className="h-5 w-5" />
             </Button>
           </div>
         </div>
+      </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <Card key={product.id} className="overflow-hidden animate-fade-in">
-              <div className="aspect-square relative">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-lg">{product.name}</h3>
-                <p className="text-sm text-gray-600 mt-1">{product.description}</p>
-                <div className="flex justify-between items-center mt-4">
-                  <span className="font-bold text-primary">${product.price}</span>
-                  <Button
-                    onClick={() => addToCart(product)}
-                    className="hover:scale-105 transition-transform"
-                  >
-                    Add to Cart
-                  </Button>
-                </div>
-              </div>
-            </Card>
+      <nav className="bg-white border-t">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between">
+            {navigation.map(({ icon: Icon, label }) => (
+              <Button
+                key={label}
+                variant={activeTab === label ? "default" : "ghost"}
+                className="flex-1 flex flex-col items-center py-2 gap-1"
+                onClick={() => setActiveTab(label)}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="text-xs">{label}</span>
+              </Button>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-4">
+          {announcements.map((announcement, index) => (
+            <Announcement key={index} {...announcement} />
           ))}
         </div>
-      </div>
+      </main>
     </div>
   );
 };
