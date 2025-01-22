@@ -10,10 +10,10 @@ const Timer = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    let interval: number | undefined;
+    let intervalId: NodeJS.Timeout | undefined;
 
     if (isRunning && timeLeft > 0) {
-      interval = setInterval(() => {
+      intervalId = setInterval(() => {
         setTimeLeft((time) => time - 1);
       }, 1000);
     } else if (timeLeft === 0) {
@@ -24,7 +24,7 @@ const Timer = () => {
     }
 
     return () => {
-      if (interval) clearInterval(interval);
+      if (intervalId) clearInterval(intervalId);
     };
   }, [isRunning, timeLeft, toast]);
 
